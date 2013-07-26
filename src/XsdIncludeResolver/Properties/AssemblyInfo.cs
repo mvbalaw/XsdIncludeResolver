@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("McCreary, Veselka, Bragg & Allen, P.C.")]
-[assembly: AssemblyProduct("XsdIncludeResolver")]
+[assembly: AssemblyProduct("XsdIncludeResolver - github.com/mvbalaw/XsdIncludeResolver")]
 [assembly: AssemblyCopyright("Copyright (c) McCreary, Veselka, Bragg & Allen, P.C. 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
