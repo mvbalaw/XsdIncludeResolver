@@ -6,7 +6,7 @@ Microsoft's xsd.exe can be used to generate class files from XSD files.
 The problem is it doesn't try to resolve include files and there is no
 switch to make it do so.  This tool attempts to resolve the include
 references in the XSDs you list on the command line. If successful it 
-builds builds a parameter file for use with Microsoft's xsd.exe.  
+builds a parameter file for use with Microsoft's xsd.exe.  
 
 ### How To Build:
 
