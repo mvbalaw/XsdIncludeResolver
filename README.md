@@ -20,9 +20,11 @@ builds a parameter file for use with Microsoft's xsd.exe.
 
 XsdIncludeResolver.exe  your.output.namespace xsdfile1.xsd [additional xsd file names]
 
+this creates parameters.xml in the current directory.
+
 If all necessary include files are found you can then run xsd.exe with:
 
-xsd.exe /c /o:your_output_directory /p:parameters.xml
+xsd.exe /c /out:your_output_directory /p:parameters.xml
 
 the class files for all the objects defined by XSDs in parameters.xml will be generated to your_output_directory.
 
