@@ -15,12 +15,6 @@ namespace XsdIncludeResolver
 	</generateClasses>
 </xsd>";
 
-		private static HashSet<string> FindAllXsds(string directoryName)
-		{
-			var path = Path.GetFullPath(directoryName);
-			return new HashSet<string>(Directory.GetFiles(path, "*.xsd", SearchOption.AllDirectories));
-		}
-
 		private static void Main(string[] args)
 		{
 			if (args.Length == 0 || args[0] == "/?")

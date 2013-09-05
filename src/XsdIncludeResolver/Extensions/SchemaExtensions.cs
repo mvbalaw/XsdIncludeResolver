@@ -34,11 +34,8 @@ namespace XsdIncludeResolver.Extensions
 			return new Uri(location);
 		}
 
-		public static Uri GetUri(this string importTag, XsdIncludeUri parent)
+		public static Uri GetUri(this string location, XsdIncludeUri parent)
 		{
-			var start = importTag.IndexOf("schemaLocation=\"") + "schemaLocation=\"".Length;
-			var end = importTag.IndexOf('"', start);
-			var location = importTag.Substring(start, end - start);
 			return parent.IsUrl ? CreateUrlUri(location, parent.Uri.AbsoluteUri) : CreateFileUri(location, parent.Uri.LocalPath);
 		}
 	}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Xml.Schema;
 
 using XsdIncludeResolver.Extensions;
 
@@ -36,19 +36,27 @@ namespace XsdIncludeResolver
 				File.WriteAllText(fullLocalPath, content);
 				return true;
 			}
-			Console.Error.WriteLine("Could not create directory for: "+reference.LocalFileName);
+			Console.Error.WriteLine("Could not create directory for: " + reference.LocalFileName);
 			return false;
 		}
 
-		private static XsdIncludeUri GetSchemaLocation(string importTag, XsdIncludeUri parent)
+		private static XsdIncludeUri GetSchemaLocation(string importTag, string @namespace, XsdIncludeUri parent)
 		{
 			var uri = importTag.GetUri(parent);
 			if (uri == null)
 			{
 				return null;
 			}
-			var reference = new XsdIncludeUri(uri);
+			var reference = new XsdIncludeUri(uri, @namespace);
 			return reference;
+		}
+
+		private static XmlSchema ReadXsdFile(XsdIncludeUri uri)
+		{
+			using (var fileStream = File.OpenRead(uri.LocalFileName))
+			{
+				return XmlSchema.Read(fileStream, null);
+			}
 		}
 
 		private XsdIncludeUri Resolve(XsdIncludeUri uri)
@@ -60,8 +68,32 @@ namespace XsdIncludeResolver
 			}
 			if (!uri.IsUrl)
 			{
-				Console.Error.WriteLine("can't find: " + localFileName);
-				return null;
+				if (uri.Namespace == null)
+				{
+					Console.Error.WriteLine("can't find: " + localFileName);
+					return null;
+				}
+				var ns = uri.Namespace;
+				if (ns == "http://www.w3.org/XML/1998/namespace")
+				{
+					ns = "http://www.w3.org/2001/";
+				}
+				if (!ns.EndsWith("/"))
+				{
+					ns += "/";
+				}
+				Uri tempUri;
+				if (!Uri.TryCreate(new Uri(ns), Path.GetFileName(localFileName), out tempUri))
+				{
+					Console.Error.WriteLine("Could not create uri from:" + uri.Namespace + " AND " + uri.Uri);
+					return null;
+				}
+
+				var container= new XsdIncludeUri(tempUri, uri.Namespace);
+				if (FetchAndSaveXsd(container))
+				{
+					return container;
+				}
 			}
 			if (File.Exists(uri.LocalFileName))
 			{
@@ -78,11 +110,11 @@ namespace XsdIncludeResolver
 		{
 			var success = true;
 			Console.WriteLine(uri.IsUrl ? uri.Uri.AbsoluteUri : uri.LocalFileName);
-			var itsImports = File.ReadLines(uri.LocalFileName).Where(x => x.Contains("<xsd:import"));
+			var itsImports = ReadXsdFile(uri).Includes;
 			var toReturn = new List<XsdIncludeUri>();
-			foreach (var import in itsImports)
+			foreach (XmlSchemaImport import in itsImports)
 			{
-				var reference = GetSchemaLocation(import, uri);
+				var reference = GetSchemaLocation(import.SchemaLocation, import.Namespace, uri);
 				if (reference == null)
 				{
 					continue;

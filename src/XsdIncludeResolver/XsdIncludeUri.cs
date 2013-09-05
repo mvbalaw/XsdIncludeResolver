@@ -11,13 +11,14 @@ namespace XsdIncludeResolver
 		{
 		}
 
-		public XsdIncludeUri(Uri uri)
+		public XsdIncludeUri(Uri uri, string @namespace = null)
 		{
 			if (!uri.IsAbsoluteUri)
 			{
 				throw new ArgumentException(ErrorExpectedAFullFilePathOrUrl, "uri");
 			}
 			Uri = uri;
+			Namespace = @namespace;
 		}
 
 		public string LocalFileName
@@ -37,6 +38,7 @@ namespace XsdIncludeResolver
 		}
 
 		public Uri Uri { get; private set; }
+		public string Namespace { get; set; }
 
 		public bool IsUrl
 		{
